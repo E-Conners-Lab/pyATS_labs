@@ -1,0 +1,15 @@
+testbed:
+  name: simpl_lab
+  credentials:
+    default:
+      username: cisco
+      password: cisco
+
+devices:
+  R1:
+    os: iosxe
+    type: router
+    connections:
+      cli:
+        protocol: ssh
+        ip: 192.0.2.10
