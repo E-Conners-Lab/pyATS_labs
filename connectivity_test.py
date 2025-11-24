@@ -73,3 +73,27 @@ class ConnectivityTest(aetest.Testcase):
             self.passed("All interfaces checked successfully")
         else:
             self.failed("One or more interface checks failed")
+
+
+class CommonCleanup(aetest.CommonCleanup):
+
+    @aetest.subsection
+    def disconnect_from_testbed(self):
+        log.info("+" * 78)
+        log.info("|                  Disconnecting from all devices in testbed                  |")
+        log.info("+" * 78)
+
+        # Grab the testbed saved in CommonSetup
+        testbed = self.parent.parameters.get('testbed')
+
+        if not testbed:
+            log.warning("No testbed found in parent parameters; nothing to disconnect.")
+            return
+
+        for device in testbed.devices.values():
+            if hasattr(device, "is_connected") and device.is_connected():
+                log.info(f"Disconnecting from {device.name}...")
+                try:
+                    device.disconnect()
+                except Exception as e:
+                    log.warning(f"Error disconnecting from {device.name}: {e}")
