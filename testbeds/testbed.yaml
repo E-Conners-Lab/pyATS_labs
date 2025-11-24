@@ -1,0 +1,48 @@
+testbed:
+  name: eve-ng-lab
+  credentials:
+    default:
+      username: admin
+      password: admin
+
+devices:
+  R1:
+    os: iosxe
+    type: router
+    platform: iosxe
+    connections:
+      cli:
+        protocol: ssh
+        ip: 192.168.68.71
+        port: 22
+
+  R2:
+    os: iosxe
+    type: router
+    platform: iosxe
+    connections:
+      cli:
+        protocol: ssh
+        ip: 192.168.68.74
+        port: 22
+
+  R3:
+    os: iosxe
+    type: router
+    platform: iosxe
+    connections:
+      cli:
+        protocol: ssh
+        ip: 192.168.68.75
+        port: 22
+
+  R4:
+    os: iosxe
+    type: router
+    platform: iosxe
+    connections:
+      cli:
+        protocol: ssh
+        ip: 192.168.68.77
+        port: 22
+
