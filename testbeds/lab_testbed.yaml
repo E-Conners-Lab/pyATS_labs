@@ -1,5 +1,5 @@
 testbed:
-  name: simpl_lab
+  name: simple_lab
   credentials:
     default:
       username: cisco
