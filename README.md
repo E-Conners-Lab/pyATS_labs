@@ -56,5 +56,5 @@ python export_ospf_detailed_json.py
 
 ---
 
-**Author:** [Your Name]  
+**Author:**  Elliot Conner  
 **Updated:** 2025-11-25
