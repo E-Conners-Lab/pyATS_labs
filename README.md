@@ -1,108 +1,60 @@
-# Network Automation with pyATS: Interface Validation & OSPF Deployment
+# OSPF pyATS Automation Suite
 
-This repository contains two modular test scripts using Cisco's [pyATS](https://developer.cisco.com/pyats/) and Genie libraries. These scripts automate interface health checks and deploy a fully-connected OSPF /31 fabric, complete with loopback setup and neighbor adjacency monitoring.
+This project automates the deployment, verification, and export of OSPF configuration and status across a multi-router lab environment using Cisco pyATS.
 
----
+## 🔧 Files Overview
 
-## 🔍 1. Interface Connectivity Check (`connectivity_test.py`)
+### 1. `connectivity_test.py`
+- **Purpose:** Initial validation of connectivity.
+- **Checks:** Confirms that all devices in the testbed have an IP address assigned to their `GigabitEthernet0/0` interfaces.
+- **Output:** `interface_report.txt` with status per device.
 
-This script performs an initial health check across all routers by validating that `GigabitEthernet0/0` has a configured IP address.
+### 2. `deploy_ospf_31.py`
+- **Purpose:** Fully configures a simulated OSPF network with /31 point-to-point links.
+- **Features:**
+  - Assigns IPs using a /31 subnet pool.
+  - Builds OSPF configuration including `Loopback0` and router IDs.
+  - Advertises only the loopbacks into OSPF.
+  - Includes a monitoring test that validates OSPF neighbor adjacencies for 2 minutes.
 
-### ✅ What it Does:
-- Connects to all devices in the testbed.
-- Runs `show ip interface brief`.
-- Parses output with Genie to validate `GigabitEthernet0/0`.
-- Logs results and generates a report (`interface_report.txt`).
-- Cleanly disconnects from all devices on completion.
+### 3. `export_ospf_detailed_json.py`
+- **Purpose:** Collects and exports detailed OSPF state and interface data into a structured JSON file.
+- **Captured Data:**
+  - IP addresses of `GigabitEthernet0/1` and `GigabitEthernet0/2` (non-management)
+  - `Loopback0` IP address
+  - Raw CLI output from:
+    - `show ip ospf interface brief`
+    - `show ip ospf neighbor`
+- **Output:** `ospf_detailed_export.json`
 
-### 📄 Report Example:
-```text
-Interface IP Check Report
-
-R1 - GigabitEthernet0/0 IP is 10.0.0.1
-R2 - GigabitEthernet0/0 has no IP address
-R3 - GigabitEthernet0/0 not found in parsed output
-R4 - GigabitEthernet0/0 IP is 10.0.0.4
-```
-
----
-
-## 🔧 2. OSPF /31 Fabric Deployment & Monitoring (`deploy_ospf_31.py`)
-
-After confirming device readiness, this script builds a dynamic OSPF fabric using /31 point-to-point links and loopback addresses.
-
-### ✅ What it Does:
-- Builds an address plan from a `/24` pool to carve `/31` subnets.
-- Assigns IP addresses to link interfaces across devices.
-- Creates `Loopback0` with IPs like `1.1.1.1`, `2.2.2.2`, etc.
-- Sets the OSPF `router-id` to the device’s loopback IP.
-- Advertises both loopback and P2P interfaces in OSPF area 10.
-- Deploys all configurations via `device.configure()`.
-
-### 👁️ OSPF Adjacency Monitoring:
-- Periodically checks `show ip ospf neighbor` using Genie.
-- Verifies that neighbors reach the `FULL` state.
-- Runs for 2 minutes (check every 30 seconds).
-- Fails the test if any adjacency drops or becomes unstable.
-
----
-
-## 🧪 Project Structure
-
-```text
-.
-├── connectivity_test.py        # Interface validation using Genie
-├── deploy_ospf_31.py           # OSPF /31 deployment and monitoring
-├── interface_report.txt        # Auto-generated IP address report
-├── testbeds/
-│   └── testbed.yaml            # pyATS testbed file with device definitions
-└── README.md                   # Project documentation
-```
-
----
-
-## ⚙️ Requirements
-
+## 📦 Requirements
 - Python 3.8+
 - pyATS & Genie libraries
-- Reachable Cisco devices
-- Completed `testbed.yaml`
+- Valid `testbed.yaml` in `testbeds/` folder
 
-Install with:
+## ▶️ How to Use
 
+### Run Initial Connectivity Test
 ```bash
-pip install 'pyats[full]'
+python connectivity_test.py
 ```
 
----
-
-## 🚀 Running the Scripts
-
-Run each script using a job file or directly with `pyats run job`:
-
+### Deploy OSPF /31 Topology
 ```bash
-pyats run job connectivity_test_job.py --testbed-file testbeds/testbed.yaml
-pyats run job deploy_ospf_31_job.py --testbed-file testbeds/testbed.yaml
+pyats run job deploy_ospf_31.py --testbed-file testbeds/testbed.yaml
 ```
 
----
+### Export OSPF State as JSON
+```bash
+python export_ospf_detailed_json.py
+```
 
-## 🧭 Roadmap & Extensibility
-
-You can expand this project to:
-- Validate routing tables (`show ip route`)
-- Ping between loopbacks across devices
-- Generate Markdown/CSV/HTML reports
-- Integrate into CI/CD pipelines for automated lab tests
-
----
-
-## 📜 License
-
-MIT License
+## 📊 Use Cases
+- Automated OSPF deployment and validation
+- Network state reporting and documentation
+- JSON-driven visualization using tools like Mermaid or Grafana
 
 ---
 
-## 🤝 Contributions
-
-PRs and feedback welcome — let’s build a more extensible pyATS test suite together.
+**Author:** [Your Name]  
+**Updated:** 2025-11-25
