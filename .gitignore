@@ -1,0 +1,10 @@
+# PyCharm project settings
+.idea/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# OS junk
+.DS_Store
