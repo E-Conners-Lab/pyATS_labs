@@ -5,6 +5,6 @@ from pyats.easypy import Task
 def main(runtime):
     # Run the AEtest script and pass the testbed
     Task(
-        testscript='ospf_export_test.py',
+        testscript='ospf_export_test_scalable.py',
         testbed=runtime.testbed
     ).run()

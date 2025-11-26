@@ -46,7 +46,7 @@ pyats run job deploy_ospf_31.py --testbed-file testbeds/testbed.yaml
 
 ### Export OSPF State as JSON
 ```bash
-python export_ospf_detailed_json.py
+python ospf_export_detailed_json_scalable_job.py
 ```
 
 ## 📊 Use Cases
