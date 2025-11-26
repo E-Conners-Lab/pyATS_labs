@@ -1,31 +1,36 @@
-# genie_testscript.py
-
 from pyats.aetest import Testcase, test, main
-from ospf_flap_trigger import TriggerFlapOspfInterface
+from genie.testbed import load
+import json
+import os
+from datetime import datetime
 
-
-class CommonSetup(Testcase):
+class ExportOspfData(Testcase):
     @test
-    def connect(self, testbed):
+    def gather_ospf_details(self, testbed):
+        # Create output directory
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_dir = f"results/ospf_export_{timestamp}"
+        os.makedirs(output_dir, exist_ok=True)
+
+        ospf_data = {}
+
         for device in testbed.devices.values():
-            device.connect()
+            device.connect(log_stdout=False)
+            print(f"Connected to {device.name}")
 
+            ospf_data[device.name] = {
+                "ospf_neighbor": device.execute("show ip ospf neighbor"),
+                "ospf_int_brief": device.execute("show ip ospf interface brief"),
+                "ip_int_brief": device.execute("show ip interface brief")
+            }
 
-class TriggerTest(Testcase):
-    @test
-    def run_trigger(self, testbed):
-        trigger = TriggerFlapOspfInterface()
-        trigger.testbed = testbed
-        trigger.verify_prerequisite()
-        trigger.execute()
+        # Save to JSON
+        output_file = os.path.join(output_dir, "ospf_detailed_export.json")
+        with open(output_file, "w") as f:
+            json.dump(ospf_data, f, indent=2)
 
+        print(f"✅ OSPF data saved to {output_file}")
 
+# Required for easypy
 if __name__ == "__main__":
-    import argparse
-    from pyats.easypy import run
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--testbed', required=True)
-    args = parser.parse_args()
-
-    run(testscript='genie_testscript.py', testbed=args.testbed)
+    main()
